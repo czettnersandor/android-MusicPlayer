@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.czettner.musicplayer.NowplayingActivity">
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progress"
+        android:orientation="horizontal">
+        <ImageView
+            style="@style/playButtons"
+            android:layout_weight="1"
+            android:contentDescription="@string/previous"
+            android:src="@android:drawable/ic_media_previous"/>
+        <ImageView
+            style="@style/playButtons"
+            android:layout_weight="1"
+            android:contentDescription="@string/play"
+            android:src="@android:drawable/ic_media_play"/>
+        <ImageView
+            style="@style/playButtons"
+            android:layout_weight="1"
+            android:contentDescription="@string/next"
+            android:src="@android:drawable/ic_media_next"/>
+    </LinearLayout>
+</RelativeLayout>
