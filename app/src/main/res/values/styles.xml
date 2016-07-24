@@ -11,6 +11,7 @@
     <style name="playButtons">
         <item name="android:layout_width">32dp</item>
         <item name="android:layout_height">32dp</item>
+        <item name="android:background">@null</item>
     </style>
 
 </resources>

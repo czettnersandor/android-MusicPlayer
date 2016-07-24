@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,30 +7,45 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context="com.czettner.musicplayer.NowplayingActivity">
     <ProgressBar
         android:id="@+id/progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/progress"
-        android:orientation="horizontal">
-        <ImageView
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+        <ImageButton
+            android:id="@+id/previous"
             style="@style/playButtons"
             android:layout_weight="1"
             android:contentDescription="@string/previous"
             android:src="@android:drawable/ic_media_previous"/>
-        <ImageView
+        <ImageButton
+            android:id="@+id/play"
             style="@style/playButtons"
             android:layout_weight="1"
             android:contentDescription="@string/play"
             android:src="@android:drawable/ic_media_play"/>
-        <ImageView
+        <ImageButton
+            android:id="@+id/next"
             style="@style/playButtons"
             android:layout_weight="1"
             android:contentDescription="@string/next"
             android:src="@android:drawable/ic_media_next"/>
     </LinearLayout>
-</RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current folder:" />
+    <Button
+        android:id="@+id/choose_folder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_folder"
+        android:onClick="chooseFolderClick"/>
+</LinearLayout>
