@@ -4,5 +4,6 @@
     <string name="play">Play</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="current_folder">Current folder:</string>
     <string name="choose_folder">Choose Folder</string>
 </resources>

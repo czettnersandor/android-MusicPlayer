@@ -11,8 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
@@ -23,6 +23,7 @@ public class NowplayingActivity extends AppCompatActivity {
     private ImageButton previousButton;
     private ImageButton playButton;
     private ImageButton nextButton;
+    private TextView currentFolderText;
 
     private PlayerService mPlayerService;
     private boolean mBound;
@@ -36,6 +37,7 @@ public class NowplayingActivity extends AppCompatActivity {
         previousButton = (ImageButton) findViewById(R.id.previous);
         playButton = (ImageButton) findViewById(R.id.play);
         nextButton = (ImageButton) findViewById(R.id.next);
+        currentFolderText = (TextView) findViewById(R.id.current_folder);
 
         playButton.setOnClickListener(new View.OnClickListener() {
               @Override
@@ -97,8 +99,28 @@ public class NowplayingActivity extends AppCompatActivity {
 
         chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config);
 
-        // REQUEST_DIRECTORY is a constant integer to identify the request, e.g. 0
         startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_DIRECTORY) {
+            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
+                playDirectory(data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
+            } else {
+                // Nothing selected
+            }
+        }
+    }
+
+    /**
+     * Queue files in directory to play
+     * @param dir Directory
+     */
+    private void playDirectory(String dir) {
+        currentFolderText.setText(dir);
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
