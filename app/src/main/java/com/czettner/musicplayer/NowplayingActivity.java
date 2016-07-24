@@ -110,7 +110,7 @@ public class NowplayingActivity extends AppCompatActivity {
             if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
                 playDirectory(data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
             } else {
-                // Nothing selected
+                // TODO: Nothing selected
             }
         }
     }
@@ -121,6 +121,12 @@ public class NowplayingActivity extends AppCompatActivity {
      */
     private void playDirectory(String dir) {
         currentFolderText.setText(dir);
+        Intent i = new Intent(this, PlayerService.class);
+        i.setAction(PlayerService.ACTION_PLAY_DIRECTORY);
+        i.putExtra("directory", dir);
+        startService(i);
+        playButton.setImageResource(android.R.drawable.ic_media_play);
+
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {

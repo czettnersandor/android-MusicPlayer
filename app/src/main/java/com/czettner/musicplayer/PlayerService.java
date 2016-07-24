@@ -5,15 +5,19 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class PlayerService extends Service implements MediaPlayer.OnPreparedListener {
 
     public static final String ACTION_PLAY_TEST = "com.czettner.action.PLAY_TEST";
     public static final String ACTION_PAUSE = "com.czettner.action.PAUSE";
     public static final String ACTION_RESUME = "com.czettner.action.RESUME";
+    public static final String ACTION_PLAY_DIRECTORY = "com.czettner.action.PLAYDIRECTORY";
 
     private MediaPlayer mMediaPlayer = null;
+    public ArrayList<String> filesQueue;
 
     // Binder given to clients
     private final IBinder mBinder = new PlayerBinder();
@@ -25,6 +29,9 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
                 mMediaPlayer = MediaPlayer.create(this, R.raw.flowers_of_scotland);
                 mMediaPlayer.setOnPreparedListener(this);
                 break;
+            case ACTION_PLAY_DIRECTORY:
+                filesQueue.clear();
+                queueDirectory(intent.getStringExtra("directory"));
             case ACTION_PAUSE:
                 mMediaPlayer.pause();
                 break;
@@ -33,6 +40,20 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
                 break;
         }
         return START_NOT_STICKY;
+    }
+
+    public void queueDirectory(String directoryName) {
+        File directory = new File(directoryName);
+
+        // get all files from a directory recursively
+        File[] fList = directory.listFiles();
+        for (File file : fList) {
+            if (file.isFile()) {
+                filesQueue.add(file.toString());
+            } else if (file.isDirectory()) {
+                queueDirectory(file.getAbsolutePath());
+            }
+        }
     }
 
     /**
