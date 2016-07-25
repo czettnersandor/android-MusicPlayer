@@ -6,4 +6,5 @@
     <string name="previous">Previous</string>
     <string name="current_folder">Current folder:</string>
     <string name="choose_folder">Choose Folder</string>
+    <string name="queue">Queue</string>
 </resources>

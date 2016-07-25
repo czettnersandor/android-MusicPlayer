@@ -3,21 +3,26 @@ package com.czettner.musicplayer;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PlayerService extends Service implements MediaPlayer.OnPreparedListener {
 
     public static final String ACTION_PLAY_TEST = "com.czettner.action.PLAY_TEST";
     public static final String ACTION_PAUSE = "com.czettner.action.PAUSE";
     public static final String ACTION_RESUME = "com.czettner.action.RESUME";
-    public static final String ACTION_PLAY_DIRECTORY = "com.czettner.action.PLAYDIRECTORY";
+    public static final String ACTION_PLAY_DIRECTORY = "com.czettner.action.PLAY_DIRECTORY";
+    public static final String FILE_PATTERN = "(.*)\\.(mp3|flac)$";
 
     private MediaPlayer mMediaPlayer = null;
-    public ArrayList<String> filesQueue;
+    public ArrayList<String> filesQueue = new ArrayList<String>();
 
     // Binder given to clients
     private final IBinder mBinder = new PlayerBinder();
@@ -32,24 +37,51 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
             case ACTION_PLAY_DIRECTORY:
                 filesQueue.clear();
                 queueDirectory(intent.getStringExtra("directory"));
+                release();
+                File f = new File(filesQueue.get(0));
+                Uri musicUri = Uri.fromFile(f);
+                mMediaPlayer = new MediaPlayer();
+                // mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                try {
+                    mMediaPlayer.setDataSource(getApplicationContext(), musicUri);
+                } catch (java.io.IOException e) {
+                    // TODO
+                }
+                mMediaPlayer.setOnPreparedListener(this);
+                mMediaPlayer.prepareAsync();
+                break;
             case ACTION_PAUSE:
-                mMediaPlayer.pause();
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.pause();
+                }
                 break;
             case ACTION_RESUME:
-                mMediaPlayer.start();
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.start();
+                }
                 break;
         }
         return START_NOT_STICKY;
     }
 
+    /**
+     * Get all files from a directory recursively and add it to the queue
+     * @param directoryName
+     */
     public void queueDirectory(String directoryName) {
         File directory = new File(directoryName);
+        String fileName;
+        Pattern r = Pattern.compile(FILE_PATTERN);
 
-        // get all files from a directory recursively
         File[] fList = directory.listFiles();
         for (File file : fList) {
             if (file.isFile()) {
-                filesQueue.add(file.toString());
+                fileName = file.toString();
+                Matcher m = r.matcher(fileName);
+                if (m.find()) {
+                    Log.i("MediaPlayer", "Queue file " + fileName);
+                    filesQueue.add(fileName);
+                }
             } else if (file.isDirectory()) {
                 queueDirectory(file.getAbsolutePath());
             }

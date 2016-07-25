@@ -102,6 +102,10 @@ public class NowplayingActivity extends AppCompatActivity {
         startActivityForResult(chooserIntent, REQUEST_DIRECTORY);
     }
 
+    public void showQueueClick(View view) {
+        
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

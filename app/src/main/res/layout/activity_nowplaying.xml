@@ -53,4 +53,10 @@
         android:layout_height="wrap_content"
         android:text="@string/choose_folder"
         android:onClick="chooseFolderClick"/>
+    <Button
+        android:id="@+id/show_queue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/queue"
+        android:onClick="showQueueClick"/>
 </LinearLayout>

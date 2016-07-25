@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.czettner.musicplayer">
-    
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -12,7 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:theme">
-
         <activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
         <activity
             android:name=".NowplayingActivity"
@@ -26,7 +26,9 @@
 
         <service
             android:name=".PlayerService"
-            android:label="@string/app_name"/>
+            android:label="@string/app_name" />
+
+        <activity android:name=".QueueActivity"></activity>
     </application>
 
 </manifest>
