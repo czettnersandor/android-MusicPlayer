@@ -9,4 +9,7 @@
     <string name="queue">Queue</string>
     <string name="song">Song</string>
     <string name="music_queue">Music Queue</string>
+    <string name="music_queue_label">Hereby shown the music queue currently played</string>
+    <string name="nowplaying_label">This is a very simple music player app. You can click the play button to instantly listen to the Flowers of Scotland or you can choose a folder full of mp3 to play.</string>
+    <string name="backto_nowplaying">Now Playing</string>
 </resources>

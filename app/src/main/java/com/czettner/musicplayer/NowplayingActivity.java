@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -27,7 +29,8 @@ public class NowplayingActivity extends AppCompatActivity {
     private ImageButton nextButton;
     private TextView currentFolderText;
     private PlayerService mPlayerService;
-    private boolean mBound;
+    private boolean mBound = false;
+    private boolean mUpdateProgress = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +52,22 @@ public class NowplayingActivity extends AppCompatActivity {
                           i.setAction(PlayerService.ACTION_PAUSE);
                           startService(i);
                           playButton.setImageResource(android.R.drawable.ic_media_play);
+                          mUpdateProgress = false;
                       } else {
                           Intent i = new Intent(NowplayingActivity.this, PlayerService.class);
                           i.setAction(PlayerService.ACTION_RESUME);
                           startService(i);
                           playButton.setImageResource(android.R.drawable.ic_media_pause);
+                          mUpdateProgress = true;
+                          handler.post(mUpdateRunnable);
                       }
                   } else {
                       Intent i = new Intent(NowplayingActivity.this, PlayerService.class);
                       i.setAction(PlayerService.ACTION_PLAY_TEST);
                       startService(i);
                       playButton.setImageResource(android.R.drawable.ic_media_pause);
+                      mUpdateProgress = true;
+                      mUpdateRunnable.run();
                   }
 
               }
@@ -153,7 +161,8 @@ public class NowplayingActivity extends AppCompatActivity {
         i.putExtra("directory", dir);
         startService(i);
         playButton.setImageResource(android.R.drawable.ic_media_pause);
-
+        mUpdateProgress = true;
+        handler.post(mUpdateRunnable);
     }
 
     /** Defines callbacks for service binding, passed to bindService() */
@@ -171,6 +180,21 @@ public class NowplayingActivity extends AppCompatActivity {
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             mBound = false;
+        }
+    };
+
+    // This code updates the progress bar
+    final Handler handler = new Handler();
+    private Runnable mUpdateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mPlayerService != null && mPlayerService.isPlaying()) {
+                progressBar.setMax(mPlayerService.getDuration());
+                progressBar.setProgress(mPlayerService.getCurrentPosition());
+            }
+            if (mUpdateProgress) {
+                handler.postDelayed(mUpdateRunnable, 500);
+            }
         }
     };
 

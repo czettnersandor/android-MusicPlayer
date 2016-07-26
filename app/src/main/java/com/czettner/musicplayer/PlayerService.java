@@ -108,6 +108,14 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
         }
     }
 
+    public int getCurrentPosition() {
+        return mMediaPlayer.getCurrentPosition();
+    }
+
+    public int getDuration() {
+        return mMediaPlayer.getDuration();
+    }
+
     /**
      * This is used to query state from the @link NowplayingActivity
      */

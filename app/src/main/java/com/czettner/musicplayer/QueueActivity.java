@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +22,22 @@ public class QueueActivity extends AppCompatActivity {
     private PlayerService mPlayerService;
     private boolean mBound;
 
+    private Button backtoNowPlaying;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_queue);
+
+        backtoNowPlaying = (Button) findViewById(R.id.backto_nowplaying);
+
+        backtoNowPlaying.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(QueueActivity.this, NowplayingActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     private void initializeData() {
