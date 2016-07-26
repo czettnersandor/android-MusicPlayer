@@ -18,13 +18,14 @@ import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
 public class NowplayingActivity extends AppCompatActivity {
+
     private final static int REQUEST_DIRECTORY = 1;
+
     private ProgressBar progressBar;
     private ImageButton previousButton;
     private ImageButton playButton;
     private ImageButton nextButton;
     private TextView currentFolderText;
-
     private PlayerService mPlayerService;
     private boolean mBound;
 
@@ -103,7 +104,8 @@ public class NowplayingActivity extends AppCompatActivity {
     }
 
     public void showQueueClick(View view) {
-        
+        Intent intent = new Intent(this, QueueActivity.class);
+        startActivity(intent);
     }
 
     @Override

@@ -22,7 +22,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     public static final String FILE_PATTERN = "(.*)\\.(mp3|flac)$";
 
     private MediaPlayer mMediaPlayer = null;
-    public ArrayList<String> filesQueue = new ArrayList<String>();
+    public ArrayList<Music> filesQueue = new ArrayList<Music>();
 
     // Binder given to clients
     private final IBinder mBinder = new PlayerBinder();
@@ -37,18 +37,20 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
             case ACTION_PLAY_DIRECTORY:
                 filesQueue.clear();
                 queueDirectory(intent.getStringExtra("directory"));
-                release();
-                File f = new File(filesQueue.get(0));
-                Uri musicUri = Uri.fromFile(f);
-                mMediaPlayer = new MediaPlayer();
-                // mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                try {
-                    mMediaPlayer.setDataSource(getApplicationContext(), musicUri);
-                } catch (java.io.IOException e) {
-                    // TODO
+                if (filesQueue.size() != 0) {
+                    release();
+                    File f = new File(filesQueue.get(0).fileName);
+                    Uri musicUri = Uri.fromFile(f);
+                    mMediaPlayer = new MediaPlayer();
+                    // mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    try {
+                        mMediaPlayer.setDataSource(getApplicationContext(), musicUri);
+                    } catch (java.io.IOException e) {
+                        // TODO
+                    }
+                    mMediaPlayer.setOnPreparedListener(this);
+                    mMediaPlayer.prepareAsync();
                 }
-                mMediaPlayer.setOnPreparedListener(this);
-                mMediaPlayer.prepareAsync();
                 break;
             case ACTION_PAUSE:
                 if (mMediaPlayer != null) {
@@ -80,7 +82,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
                 Matcher m = r.matcher(fileName);
                 if (m.find()) {
                     Log.i("MediaPlayer", "Queue file " + fileName);
-                    filesQueue.add(fileName);
+                    filesQueue.add(new Music(fileName));
                 }
             } else if (file.isDirectory()) {
                 queueDirectory(file.getAbsolutePath());

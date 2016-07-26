@@ -28,7 +28,9 @@
             android:name=".PlayerService"
             android:label="@string/app_name" />
 
-        <activity android:name=".QueueActivity"></activity>
+        <activity
+            android:name=".QueueActivity"
+            android:label="@string/music_queue"/>
     </application>
 
 </manifest>
