@@ -13,16 +13,19 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PlayerService extends Service implements MediaPlayer.OnPreparedListener {
+public class PlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
 
     public static final String ACTION_PLAY_TEST = "com.czettner.action.PLAY_TEST";
     public static final String ACTION_PAUSE = "com.czettner.action.PAUSE";
     public static final String ACTION_RESUME = "com.czettner.action.RESUME";
     public static final String ACTION_PLAY_DIRECTORY = "com.czettner.action.PLAY_DIRECTORY";
+    public static final String ACTION_PREVIOUS = "com.czettner.action.PREVIOUS";
+    public static final String ACTION_NEXT = "com.czettner.action.NEXT";
     public static final String FILE_PATTERN = "(.*)\\.(mp3|flac)$";
 
     private MediaPlayer mMediaPlayer = null;
     public ArrayList<Music> filesQueue = new ArrayList<Music>();
+    public int currentlyPlaying = 0;
 
     // Binder given to clients
     private final IBinder mBinder = new PlayerBinder();
@@ -38,18 +41,7 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
                 filesQueue.clear();
                 queueDirectory(intent.getStringExtra("directory"));
                 if (filesQueue.size() != 0) {
-                    release();
-                    File f = new File(filesQueue.get(0).fileName);
-                    Uri musicUri = Uri.fromFile(f);
-                    mMediaPlayer = new MediaPlayer();
-                    // mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    try {
-                        mMediaPlayer.setDataSource(getApplicationContext(), musicUri);
-                    } catch (java.io.IOException e) {
-                        // TODO
-                    }
-                    mMediaPlayer.setOnPreparedListener(this);
-                    mMediaPlayer.prepareAsync();
+                    playQueue();
                 }
                 break;
             case ACTION_PAUSE:
@@ -62,15 +54,41 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
                     mMediaPlayer.start();
                 }
                 break;
+            case ACTION_PREVIOUS:
+                if (mMediaPlayer != null) {
+                    previous();
+                }
+                break;
+            case ACTION_NEXT:
+                if (mMediaPlayer != null) {
+                    next();
+                }
+                break;
         }
         return START_NOT_STICKY;
     }
 
+    private void playQueue() {
+        release();
+        File f = new File(filesQueue.get(currentlyPlaying).fileName);
+        Uri musicUri = Uri.fromFile(f);
+        mMediaPlayer = new MediaPlayer();
+        try {
+            mMediaPlayer.setDataSource(getApplicationContext(), musicUri);
+        } catch (java.io.IOException e) {
+            // TODO
+        }
+        mMediaPlayer.setOnPreparedListener(this);
+        mMediaPlayer.setOnCompletionListener(this);
+        mMediaPlayer.prepareAsync();
+    }
+
     /**
      * Get all files from a directory recursively and add it to the queue
-     * @param directoryName
+     * @param directoryName Directory name
      */
     public void queueDirectory(String directoryName) {
+        currentlyPlaying = 0;
         File directory = new File(directoryName);
         String fileName;
         Pattern r = Pattern.compile(FILE_PATTERN);
@@ -108,6 +126,28 @@ public class PlayerService extends Service implements MediaPlayer.OnPreparedList
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        if (currentlyPlaying < filesQueue.size()) {
+            currentlyPlaying++;
+            playQueue();
+        }
+    }
+
+    public void next() {
+        if (currentlyPlaying < filesQueue.size()) {
+            currentlyPlaying++;
+            playQueue();
+        }
+    }
+
+    public void previous() {
+        if (currentlyPlaying > 0 && filesQueue.size() > 0) {
+            currentlyPlaying--;
+            playQueue();
+        }
     }
 
     @Override

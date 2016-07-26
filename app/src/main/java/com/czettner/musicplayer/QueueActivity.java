@@ -1,5 +1,10 @@
 package com.czettner.musicplayer;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,13 +17,18 @@ public class QueueActivity extends AppCompatActivity {
 
     private RecyclerView rv;
     private List<Music> musicList;
+    private PlayerService mPlayerService;
+    private boolean mBound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_queue);
+    }
 
-        initializeData();
+    private void initializeData() {
+        musicList = new ArrayList<>();
+        musicList = mPlayerService.filesQueue;
 
         rv = (RecyclerView) findViewById(R.id.rv);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -27,11 +37,43 @@ public class QueueActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
     }
 
-    private void initializeData() {
-        musicList = new ArrayList<>();
-        musicList.add(new Music("Test title 1", "Test Album 1"));
-        musicList.add(new Music("Test title 2", "Test Album 2"));
-        musicList.add(new Music("Test title 3", "Test Album 3"));
-        musicList.add(new Music("Test title 4", "Test Album 4"));
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Bind to PlayerService
+        Intent i = new Intent(this, PlayerService.class);
+        bindService(i, mConnection, Context.BIND_AUTO_CREATE);
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Unbind from the service
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
+    }
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to PlayerService, cast the IBinder and get PlayerService instance
+            PlayerService.PlayerBinder binder = (PlayerService.PlayerBinder) service;
+            mPlayerService = binder.getService();
+            mBound = true;
+
+            // Load data into RecyclerView
+            QueueActivity.this.initializeData();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
+
 }
