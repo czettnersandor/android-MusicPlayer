@@ -6,7 +6,7 @@
     <string name="previous">Previous</string>
     <string name="current_folder">Current folder:</string>
     <string name="choose_folder">Choose Folder</string>
-    <string name="queue">Queue</string>
+    <string name="queue">Show Queue</string>
     <string name="song">Song</string>
     <string name="music_queue">Music Queue</string>
     <string name="music_queue_label">Hereby shown the music queue currently played</string>
