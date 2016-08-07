@@ -21,3 +21,5 @@ TODO:
 * Handle media buttons
 * Lock screen controls
 * Release to Google Play
+
+<a href='https://postimg.org/image/8eilv0pn1/' target='_blank'><img src='https://s6.postimg.org/8eilv0pn1/Selection_20160808c2.png' border='0' alt='postimage'/></a>
